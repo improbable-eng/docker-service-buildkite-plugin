@@ -1,0 +1,19 @@
+# shellcheck shell=bash
+
+if [[ -n "${DEBUG:-}" ]]; then
+  set -x
+  docker ps
+  docker inspect "${DOCKER_SERVICE_CONTAINER_ID}"
+fi
+
+{
+  docker logs -t "${DOCKER_SERVICE_CONTAINER_ID}" || echo "docker-service plugin unable to dump logs."
+  docker stop "${DOCKER_SERVICE_CONTAINER_ID}" || echo "docker-service plugin was not able to shut down the container that was started."
+} >docker-service.logs 2>&1
+
+unset DOCKER_SERVICE_CONTAINER_ID
+unset DOCKER_SERVICE_IP
+
+if [[ -n "${DEBUG:-}" ]]; then
+  set +x
+fi

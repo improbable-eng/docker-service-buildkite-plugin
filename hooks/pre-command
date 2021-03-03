@@ -1,0 +1,52 @@
+# shellcheck shell=bash
+
+[[ -n "${DEBUG:-}" ]] && set -x
+
+if [[ -z "${BUILDKITE_PLUGIN_DOCKER_SERVICE_CONTAINER:-}" ]]; then
+  echo "The docker-service Buildkite plugin requires specifying a container reference to run."
+  exit 1
+fi
+
+docker_cmd="docker run --rm --detach"
+
+if [[ "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK:-host}" != "host" ]]; then
+  if [[ "$(docker network ls --filter="name=${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}" --format="{{.Name}}")" != "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}" ]]; then
+    docker network create --driver=bridge "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}"
+  fi
+fi
+docker_cmd="${docker_cmd} --network=${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK:-host}"
+
+function parse_flags() {
+  local i=0
+  while true; do
+    local parameter="BUILDKITE_PLUGIN_DOCKER_SERVICE_FLAGS_${i}"
+    if [[ -z "${!parameter:-}" ]]; then
+      break
+    fi
+    docker_cmd="${docker_cmd} ${!parameter}"
+    ((i = i + 1))
+  done
+}
+parse_flags
+unset parse_flags
+
+docker_cmd="${docker_cmd} ${BUILDKITE_PLUGIN_DOCKER_SERVICE_CONTAINER}"
+
+if [[ -n "${BUILDKITE_PLUGIN_DOCKER_SERVICE_CMD:-}" ]]; then
+  docker_cmd="${docker_cmd} -- ${BUILDKITE_PLUGIN_DOCKER_SERVICE_CMD}"
+fi
+
+DOCKER_SERVICE_CONTAINER_ID="$(eval "${docker_cmd}")"
+export DOCKER_SERVICE_CONTAINER_ID
+
+DOCKER_SERVICE_IP="127.0.0.1"
+if [[ "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK:-host}" != "host" ]]; then
+  DOCKER_SERVICE_IP="$(docker inspect --format="{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" "${DOCKER_SERVICE_CONTAINER_ID}")"
+fi
+export DOCKER_SERVICE_IP
+
+if [[ -n "${DEBUG:-}" ]]; then
+  docker ps
+  docker inspect "${DOCKER_SERVICE_CONTAINER_ID}"
+  set +x
+fi

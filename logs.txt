@@ -1,0 +1,18 @@
+++ [[ -z postgres:12.6 ]]
+++ cmd=()
+++ [[ -n '' ]]
+++ flags=()
+++ parse_flags
+++ local i=0
+++ true
+++ local parameter=BUILDKITE_PLUGIN_DOCKER_SERVICE_FLAGS_0
+++ [[ -z '' ]]
+++ break
++++ docker run --rm --detach --network=host postgres:12.6
+++ DOCKER_SERVICE_CONTAINER_ID=59a04f27cac0e6845bfc0c38baebf6841eaf192b1a9ade5b7354b9c27060b388
++++ docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' 59a04f27cac0e6845bfc0c38baebf6841eaf192b1a9ade5b7354b9c27060b388
+++ DOCKER_SERVICE_CONTAINER_IP=
+++ unset cmd
+++ unset flags
+++ export DOCKER_SERVICE_CONTAINER_ID
+++ export DOCKER_SERVICE_CONTAINER_IP

@@ -1,0 +1,22 @@
+---
+name: Docker Service
+description: Run docker containers that can be used by your build steps as services
+author: https://github.com/improbable-eng
+requirements:
+  - bash
+  - docker
+configuration:
+  additionalProperties: false
+  properties:
+    cmd:
+      description: "(Optional) command to run inside the container."
+      type: string
+    flags:
+      description: "Flags to pass to the 'docker run' command."
+      type: array
+    image:
+      description: "Reference of the container image to run alongside the build step."
+      type: string
+    network:
+      description: "Docker network to which to attach the container."
+      type: string
