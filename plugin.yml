@@ -14,7 +14,7 @@ configuration:
     flags:
       description: "Flags to pass to the 'docker run' command."
       type: array
-    image:
+    container:
       description: "Reference of the container image to run alongside the build step."
       type: string
     network:
