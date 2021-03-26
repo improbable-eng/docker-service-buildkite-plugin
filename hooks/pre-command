@@ -1,5 +1,6 @@
 # shellcheck shell=bash
 
+set -e -u -o pipefail
 [[ -n "${DEBUG:-}" ]] && set -x
 
 if [[ -z "${BUILDKITE_PLUGIN_DOCKER_SERVICE_CONTAINER:-}" ]]; then
@@ -10,10 +11,17 @@ fi
 docker_cmd="docker run --rm --detach"
 
 if [[ "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK:-host}" != "host" ]]; then
-  if [[ "$(docker network ls --filter="name=${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}" --format="{{.Name}}")" != "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}" ]]; then
-    docker network create --driver=bridge "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}"
-  fi
+  # We guard the network creation via a POSIX file-descriptor lock as we might otherwise end up with
+  # two identically named networks if this plugin is invoked on the same host multiple time
+  # simultaneously.
+  (
+    flock --exclusive --timeout=5 9
+    if [[ "$(docker network ls --filter="name=${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}" --format="{{.Name}}")" != "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}" ]]; then
+      docker network create --driver=bridge "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}"
+    fi
+  ) 9>/var/lock/docker-service-buildkite-plugin.lock
 fi
+
 docker_cmd="${docker_cmd} --network=${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK:-host}"
 
 function parse_flags() {

@@ -3,8 +3,8 @@ name: Docker Service
 description: Run docker containers that can be used by your build steps as services
 author: https://github.com/improbable-eng
 requirements:
-  - bash
   - docker
+  - flock
 configuration:
   additionalProperties: false
   properties:
