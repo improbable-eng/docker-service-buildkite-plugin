@@ -17,7 +17,7 @@ steps:
     command: ./integration-tests.sh
     plugins:
       - improbable-eng/docker-service#v0.0.1:
-          image: postgres:12.6
+          container: postgres:12.6
           flags:
             - --env=POSTGRES_DB=postgres
             - --env=POSTGRES_USER=postgres
@@ -42,7 +42,7 @@ steps:
     command: ./step-script.sh
     plugins:
       - improbable-eng/docker-service#v0.0.1:
-          image: a-container:1.2.3
+          container: a-container:1.2.3
           cmd: "my-command --flag=value arg1 arg1"
 ```
 
@@ -66,14 +66,14 @@ steps:
   - label: my-dockerised-step
     plugins:
       - improbable-eng/docker-service#v0.0.1:
-          image: postgres:12.6
+          container: postgres:12.6
           network: "postgres"
           flags:
             - --env=POSTGRES_DB=postgres
             - --env=POSTGRES_USER=postgres
             - --env=POSTGRES_PASSWORD=postgres
       - buildkite-plugins/docker#v3.8.0:
-          image: "my-build-container:v1.0.0"
+          container: "my-build-container:v1.0.0"
           command: "./my-db-test-script.sh"
           network: "postgres"
           propagate-uid-gid: true
