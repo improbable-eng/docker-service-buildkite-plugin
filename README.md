@@ -16,7 +16,7 @@ steps:
   - label: integration-tests
     command: ./integration-tests.sh
     plugins:
-      - improbable-eng/docker-service#v0.0.1:
+      - improbable-eng/docker-service#v0.2.0:
           container: postgres:12.6
           flags:
             - --env=POSTGRES_DB=postgres
@@ -41,7 +41,7 @@ steps:
   - label: my-step
     command: ./step-script.sh
     plugins:
-      - improbable-eng/docker-service#v0.0.1:
+      - improbable-eng/docker-service#v0.2.0:
           container: a-container:1.2.3
           cmd: "my-command --flag=value arg1 arg1"
 ```
@@ -65,7 +65,7 @@ by using the [Docker Buildkite plugin] with its `network` option.
 steps:
   - label: my-dockerised-step
     plugins:
-      - improbable-eng/docker-service#v0.0.1:
+      - improbable-eng/docker-service#v0.2.0:
           container: postgres:12.6
           network: "postgres"
           flags:
