@@ -85,13 +85,13 @@ steps:
 
 ## Configuration
 
-| Option    | Required | Type            | Description                                     | Default          |
-| --------- | :------: | --------------- | ----------------------------------------------- | ---------------- |
-| container | **Yes**  | string          | Container image to run                          | n.a              |
-| cmd       |    No    | string          | Command to run in the container                 | `<empty string>` |
-| flags     |    No    | list of strings | List of flags for 'docker run'                  | `<empty list>`   |
-| network   |    No    | string          | Docker network to which to attach the container | `host`           |
-
+| Option         | Required | Type            | Description                                     | Default          |
+| -------------- | :------: | --------------- | ----------------------------------------------- | ---------------- |
+| container      | **Yes**  | string          | Container image to run                          | n.a              |
+| cmd            |    No    | string          | Command to run in the container                 | `<empty string>` |
+| flags          |    No    | list of strings | List of flags for 'docker run'                  | `<empty list>`   |
+| network        |    No    | string          | Docker network to which to attach the container | `host`           |
+| lockfile-dir   |    No    | string          | Directory in which to create the lock file      | `/var/lock`      |
 ## Environment variables
 
 The plugin will set the following environment variables which will be accessible to your build:

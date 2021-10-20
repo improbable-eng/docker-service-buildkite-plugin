@@ -20,3 +20,6 @@ configuration:
     network:
       description: "Docker network to which to attach the container."
       type: string
+    lockfile-dir:
+      description: "Directory in which to create the lock file"
+      type: string
