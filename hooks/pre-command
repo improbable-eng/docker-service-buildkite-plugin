@@ -19,7 +19,7 @@ if [[ "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK:-host}" != "host" ]]; then
     if [[ "$(docker network ls --filter="name=${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}" --format="{{.Name}}")" != "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}" ]]; then
       docker network create --driver=bridge "${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK}"
     fi
-  ) 9>/var/lock/docker-service-buildkite-plugin.lock
+  ) 9>"${BUILDKITE_PLUGIN_DOCKER_SERVICE_LOCKFILE_DIR:-/var/lock}/docker-service-buildkite-plugin.lock"
 fi
 
 docker_cmd="${docker_cmd} --network=${BUILDKITE_PLUGIN_DOCKER_SERVICE_NETWORK:-host}"
